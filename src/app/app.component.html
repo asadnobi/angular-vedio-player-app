@@ -1,7 +1,7 @@
 <header class="header">
   <div class="logo left">
     <i id="menu" class="material-icons">menu</i>
-    <img src="./assets/youtube-logo.png" width="120px" height="auto">
+    <img src="assets/youtube-logo.png" width="120px" height="auto">
   </div>
 
   <div class="search center">
@@ -60,30 +60,55 @@
   <div class="content">
     <div class="videos">
       <!-- a video starts -->
-      <div class="video">
-        <div class="thumbnail">
-          <img src="https://img.youtube.com/vi/zUwB_imVjmg/maxresdefault.jpg" alt="" />
-        </div>
-
-        <div class="details">
-          <div class="author">
-            <img
-              src="https://yt3.ggpht.com/bpzY-S4DYlbTeOpY5hIA7qz_hcbMkgvLAugtwKBGTTImNnWAGudX0y53bo_fJZ0auypxrWkUiw=s88-c-k-c0x00ffffff-no-rj"
-              alt="" />
+      <ng-container *ngFor="let video of playlist; index as $index;">
+        <div class="video" (click)="selectedVideo(video, $index)">
+          <div class="thumbnail">
+            <img [src]="video.thumbnailUrl" [alt]="video.title" />
           </div>
-          <div class="title">
-            <h3>
-              Introverts & Content Creation | Sumudu Siriwardana
-            </h3>
-            <a href="">
-              Francesco Ciulla
-            </a>
-            <span> 2M Views • 3 Months Ago </span>
+          <div class="details">
+            <div class="author">
+              <img src="assets/user-avater.png" alt="" />
+            </div>
+            <div class="title">
+              <h3>{{video.title}}</h3>
+              <a href=""> {{video.author}} </a>
+              <span> {{video.views | numberSuffix}} Views • {{video.uploadTime | dateAgo}} </span>
+            </div>
           </div>
         </div>
-
-      </div>
+      </ng-container>
       <!-- a video Ends -->
     </div>
   </div>
 </main>
+
+
+<ng-template #content let-modal>
+	<div class="modal-header">
+		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('close')"></button>
+	</div>
+	<div class="modal-body">
+    <vg-player (onPlayerReady)="onPlayerReady($event)">
+      <vg-overlay-play></vg-overlay-play>
+      <vg-buffering></vg-buffering>
+      <vg-scrub-bar>
+        <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+        <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
+      </vg-scrub-bar>
+      <vg-controls vgFor="vid" [vgAutohide]="true" [vgAutohideTime]="5">
+        <vg-play-pause vgFor="vid"></vg-play-pause>
+        <vg-playback-button></vg-playback-button>
+        <vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
+        <vg-scrub-bar style="pointer-events: none;"></vg-scrub-bar>
+        <vg-time-display vgProperty="left" vgFormat="mm:ss"></vg-time-display>
+        <vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
+        <vg-track-selector></vg-track-selector>
+        <vg-mute></vg-mute>
+        <vg-volume></vg-volume>
+        <vg-fullscreen></vg-fullscreen>
+      </vg-controls>
+      <video #media [vgMedia]="$any(media)" id="vid" preload="auto" [src]="activeVideo?.videoUrl" crossorigin>
+      </video>
+    </vg-player>
+  </div>
+</ng-template>
